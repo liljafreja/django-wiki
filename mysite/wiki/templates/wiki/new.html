@@ -1,0 +1,14 @@
+<form action="/create/" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <label for="title">Article title:</label>
+        <input type="text" id="title" name="title">
+        <br>
+        <br>
+        <label for="text">Please enter the content of your article:</label>
+        <br>
+        <textarea id="text" name="text" rows="4" cols="50"></textarea>
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    </fieldset>
+    <input type="submit" value="Submit">
+</form>
