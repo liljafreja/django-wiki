@@ -1,5 +1,5 @@
 <p><strong>{{ article.title }}</strong></p>
-<p>{{ article.text }}</p>
+<p>{{ text | safe }}</p>
 <br>
 <a href="/wiki/{{ article.article_id }}/edit">Edit</a>
 <br>
