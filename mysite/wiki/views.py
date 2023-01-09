@@ -4,13 +4,16 @@ from .models import Article
 from django.http import HttpResponse, HttpResponseRedirect
 
 
-def index(request):
+def index(_):
+    return HttpResponseRedirect('/wiki')
+
+
+def display_article_overview(request):
     latest_article_list = Article.objects.order_by('title')
     template = loader.get_template('wiki/index.html')
     context = {
         'latest_article_list': latest_article_list,
     }
-    # TODO redirection to /wiki
     return HttpResponse(template.render(context, request))
 
 
@@ -25,7 +28,7 @@ def create_or_edit_article(request):
     article_id = '_'.join(title.lower().split())
     previous_article_id = request.POST['previous_article_id']
     result = Article.objects.filter(article_id=article_id)
-    # tODO fetch a thing
+    # TODO fetch a thing
     previous_result = Article.objects.filter(article_id=previous_article_id)
     if len(result) == 0:
         if len(previous_result) != 0:
