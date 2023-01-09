@@ -1,6 +1,7 @@
 <form action="/wiki/create-or-edit/" method="post">
     {% csrf_token %}
     <fieldset>
+        <input type="hidden" name="previous_article_id" value="{{ previous_article_id }}">
         <label for="title">Article title:</label>
         <input type="text" id="title" name="title" value="{{ article.title }}">
         <br>
@@ -12,3 +13,4 @@
     </fieldset>
     <input type="submit" value="Submit">
 </form>
+<a href="/wiki/"> Home </a>
