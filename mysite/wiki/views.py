@@ -3,7 +3,9 @@ from django.template import loader
 from .models import Article
 from django.http import HttpResponse, HttpResponseRedirect
 
-from .persistence import get_article_or_404, get_article
+from .persistence import get_article_or_404, get_article, delete_article_if_exists
+
+import re
 
 
 def index(_):
@@ -52,9 +54,6 @@ def edit_article(request, article_id):
     return HttpResponse(template.render(context, request))
 
 
-import re
-
-
 def render_custom_links(text):
     return re.sub(r'\[(.*)\]\((.*)\)',
                   lambda match: f'<a href="/wiki/{match.group(1)}">{match.group(2)}</a>', text)
@@ -71,6 +70,5 @@ def display_detail(request, article_id):
 
 
 def delete_article(_, article_id):
-    article = get_article_or_404(article_id)
-    article.delete()
+    delete_article_if_exists(article_id)
     return HttpResponseRedirect('/wiki/')
