@@ -14,20 +14,33 @@ def index(request):
 
 
 def add_article(request):
-    template = loader.get_template('wiki/new.html')
+    template = loader.get_template('wiki/create-edit.html')
     context = {}
     return HttpResponse(template.render(context, request))
 
 
-def create_article(request):
-    article = Article()
-    title = request.POST['title']
-    text = request.POST['text']
-    article.title = title
-    article.text = text
-    article.article_id = '_'.join(title.lower().split())
-    article.save()
-    return HttpResponseRedirect(f'/wiki/{article.article_id}')
+def create_or_edit_article(request):
+    title, text = request.POST['title'], request.POST['text']
+    article_id = '_'.join(title.lower().split())
+    articles = Article.objects.filter(article_id=article_id)
+    if len(articles) == 0:
+        article = Article(title=title, article_id=article_id, text=text)
+        article.save()
+    else:
+        article = articles[0]
+        article.title = title
+        article.text = text
+        article.save()
+    return HttpResponseRedirect(f'/wiki/{article_id}')
+
+
+def edit_article(request, article_id):
+    article = Article.objects.filter(article_id=article_id)[0]
+    template = loader.get_template('wiki/create-edit.html')
+    context = {
+        'article': article
+    }
+    return HttpResponse(template.render(context, request))
 
 
 def display_detail(request, article_id):
@@ -37,3 +50,9 @@ def display_detail(request, article_id):
         'article': article
     }
     return HttpResponse(template.render(context, request))
+
+
+def delete_article(request, article_id):
+    article = Article.objects.filter(article_id=article_id)[0]
+    article.delete()
+    return HttpResponseRedirect('/wiki/')

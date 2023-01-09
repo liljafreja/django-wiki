@@ -1,13 +1,13 @@
-<form action="/create/" method="post">
+<form action="/wiki/create-or-edit/" method="post">
     {% csrf_token %}
     <fieldset>
         <label for="title">Article title:</label>
-        <input type="text" id="title" name="title">
+        <input type="text" id="title" name="title" value="{{ article.title }}">
         <br>
         <br>
         <label for="text">Please enter the content of your article:</label>
         <br>
-        <textarea id="text" name="text" rows="4" cols="50"></textarea>
+        <textarea id="text" name="text" rows="4" cols="50" >{{ article.text }}</textarea>
         {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
     </fieldset>
     <input type="submit" value="Submit">
