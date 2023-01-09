@@ -10,6 +10,7 @@ def index(request):
     context = {
         'latest_article_list': latest_article_list,
     }
+    # TODO redirection to /wiki
     return HttpResponse(template.render(context, request))
 
 
@@ -31,6 +32,7 @@ def create_or_edit_article(request):
         article.title = title
         article.text = text
         article.save()
+        # TODO case of name change
     return HttpResponseRedirect(f'/wiki/{article_id}')
 
 
