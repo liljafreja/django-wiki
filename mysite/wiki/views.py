@@ -3,6 +3,7 @@ from django.template import loader
 from .models import Article
 from django.http import HttpResponse, HttpResponseRedirect
 
+from .persistence import get_article_or_404, get_article
 
 def index(_):
     return HttpResponseRedirect('/wiki')
@@ -26,25 +27,22 @@ def add_article(request):
 def create_or_edit_article(request):
     title, text = request.POST['title'], request.POST['text']
     article_id = '_'.join(title.lower().split())
-    previous_article_id = request.POST['previous_article_id']
-    result = Article.objects.filter(article_id=article_id)
-    # TODO fetch a thing
-    previous_result = Article.objects.filter(article_id=previous_article_id)
-    if len(result) == 0:
-        if len(previous_result) != 0:
-            previous_result[0].delete()
+    article = get_article(article_id)
+    if article is None:
+        previous_article_id = request.POST['previous_article_id']
+        previous_article = get_article(previous_article_id)
+        if previous_article is not None:
+            previous_article.delete()
         article = Article(title=title, article_id=article_id, text=text)
         article.save()
     else:
-        article = result[0]
-        article.title = title
-        article.text = text
+        article.title, article.text = title, text
         article.save()
     return HttpResponseRedirect(f'/wiki/{article_id}')
 
 
 def edit_article(request, article_id):
-    article = Article.objects.filter(article_id=article_id)[0]
+    article = get_article(article_id)
     template = loader.get_template('wiki/create-edit.html')
     context = {
         'article': article,
@@ -54,7 +52,7 @@ def edit_article(request, article_id):
 
 
 def display_detail(request, article_id):
-    article = Article.objects.filter(article_id=article_id)[0]
+    article = get_article_or_404(article_id)
     template = loader.get_template('wiki/detail.html')
     context = {
         'article': article
@@ -62,7 +60,7 @@ def display_detail(request, article_id):
     return HttpResponse(template.render(context, request))
 
 
-def delete_article(request, article_id):
-    article = Article.objects.filter(article_id=article_id)[0]
+def delete_article(_, article_id):
+    article = get_article_or_404(article_id)
     article.delete()
     return HttpResponseRedirect('/wiki/')
