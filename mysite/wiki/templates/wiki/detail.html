@@ -1,6 +1,11 @@
 <p><strong>{{ article.title }}</strong></p>
 <p>{{ article.text }}</p>
 <br>
-<a href="/wiki/{{ article.article_id }}/edit"> Edit </a>
+<a href="/wiki/{{ article.article_id }}/edit">Edit</a>
 <br>
-<a href="/wiki/"> Home </a>
+<a href="/wiki/">Home</a>
+<br>
+<form action="/wiki/{{ article.article_id }}/delete/" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Delete">
+</form>
